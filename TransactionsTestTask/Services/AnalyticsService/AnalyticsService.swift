@@ -36,3 +36,11 @@ extension AnalyticsServiceImpl {
         print("Analytics event: \(event)")
     }
 }
+
+#if DEBUG
+extension AnalyticsServiceImpl {
+    func allEvents() -> [AnalyticsEvent] {
+        return events
+    }
+}
+#endif

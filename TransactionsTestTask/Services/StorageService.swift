@@ -22,27 +22,23 @@ protocol StorageService {
 }
 
 final class StorageServiceImpl: StorageService {
-    
-    // MARK: Properties
+
     private let analyticsService: AnalyticsService
-    
-    private var context: NSManagedObjectContext {
-        persistentContainer.viewContext
-    }
-    
-    private lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "TransactionsTestTask")
-        container.loadPersistentStores { _, error in
-            if let error = error {
-                fatalError("❌ Core Data load error: \(error.localizedDescription)")
-            }
-        }
-        return container
-    }()
-    
-    // MARK: - Initialization
-    init(analyticsService: AnalyticsService) {
+    private let context: NSManagedObjectContext
+
+    init(analyticsService: AnalyticsService, context: NSManagedObjectContext? = nil) {
         self.analyticsService = analyticsService
+        if let context = context {
+            self.context = context
+        } else {
+            let container = NSPersistentContainer(name: "TransactionsTestTask")
+            container.loadPersistentStores { _, error in
+                if let error = error {
+                    fatalError("❌ Core Data load error: \(error.localizedDescription)")
+                }
+            }
+            self.context = container.viewContext
+        }
     }
 }
 

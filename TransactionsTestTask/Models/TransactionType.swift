@@ -33,3 +33,17 @@ enum TransactionType: RawRepresentable {
         }
     }
 }
+
+// MARK: - Equatable
+extension TransactionType: Equatable {
+    static func ==(lhs: TransactionType, rhs: TransactionType) -> Bool {
+        switch (lhs, rhs) {
+        case (.replenishment, .replenishment):
+            return true
+        case let (.withdrawal(cat1), .withdrawal(cat2)):
+            return cat1 == cat2
+        default:
+            return false
+        }
+    }
+}

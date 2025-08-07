@@ -6,6 +6,7 @@
 //
 
 extension String {
+    
     var normalizedDouble: Double? {
         Double(self.replacingOccurrences(of: ",", with: "."))
     }

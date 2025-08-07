@@ -19,8 +19,12 @@ protocol UserDefaultsService {
 final class UserDefaultsServiceImpl: UserDefaultsService {
     
     // MARK: Properties
-    private let defaults = UserDefaults.standard
+    private var defaults: UserDefaults
     
+    // MARK: Initialization
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+    }
 }
 
 // MARK: - Public methods

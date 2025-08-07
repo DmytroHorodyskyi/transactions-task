@@ -17,6 +17,7 @@ final class BitcoinRateServiceImpl: BitcoinRateService {
     // MARK: Properties
     private let analyticsService: AnalyticsService
     private let userDefaultsService: UserDefaultsService
+    private let networkSession: NetworkSessionProtocol
     
     private var timer: Timer?
     private var cancellables = Set<AnyCancellable>()
@@ -25,16 +26,18 @@ final class BitcoinRateServiceImpl: BitcoinRateService {
     
     init(
         analyticsService: AnalyticsService,
-        userDefaultsService: UserDefaultsService
+        userDefaultsService: UserDefaultsService,
+        networkSession: NetworkSessionProtocol = URLSession.shared
     ) {
         self.analyticsService = analyticsService
         self.userDefaultsService = userDefaultsService
+        self.networkSession = networkSession
         startRateUpdates()
     }
 }
 
 // MARK: - Private methods
-private extension BitcoinRateServiceImpl {
+extension BitcoinRateServiceImpl {
     
     func startRateUpdates() {
         if let rate: Double = userDefaultsService.get(forKey: .bitcoinRate) {
@@ -56,9 +59,10 @@ private extension BitcoinRateServiceImpl {
     }
 
     @objc func fetchRate() {
-        guard let url = URL(string: "https://data-api.coindesk.com/spot/v1/latest/tick?market=coinbase&instruments=BTC-USD") else { return }
+        guard let url = URL(string: "https://data-api.coindesk.com/spot/v1/latest/tick?market=coinbase&instruments=BTC-USD")
+        else { return }
 
-        URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
+        networkSession.dataTask(with: url) { [weak self] data, _, error in
             guard let self = self,
                   let data = data,
                   error == nil,
